@@ -1,0 +1,11 @@
+metric,value
+input_rows,360
+valid_ratings,360
+mean_sample_rating,2.188888888888889
+ratings_1_2_count,239
+earliest_parsed_date,2018-10-03 00:00:00
+latest_parsed_date,2026-09-18 00:00:00
+missing_or_invalid_ratings,0
+unparsed_dates,0
+duplicate_review_id_rows,0
+duplicate_normalized_text_rows,0
