@@ -1,0 +1,77 @@
+(() => {
+  const reviews = Array.from(document.querySelectorAll('div.RHo1pe')).map(reviewEl => {
+    // Review ID
+    const reviewId = reviewEl.querySelector('[data-review-id]')?.getAttribute('data-review-id') || '';
+
+    // Author Name
+    const author = reviewEl.querySelector('.X5PpBb')?.innerText.trim() || '';
+
+    // Star Rating (extracted from aria-label, e.g., "Rated 1 stars out of five stars")
+    const ratingLabel = reviewEl.querySelector('.Jx4nYe [role="img"]')?.getAttribute('aria-label') || '';
+    const ratingMatch = ratingLabel.match(/\d+/);
+    const rating = ratingMatch ? ratingMatch[0] : '';
+
+    // Date
+    const date = reviewEl.querySelector('.bp9Aid')?.innerText.trim() || '';
+
+    // Review Content / Text
+    const reviewText = reviewEl.querySelector('.h3YV2d')?.innerText.trim() || '';
+
+    // Helpful / Thumbs-up Count
+    const thumbsUpAttr = reviewEl.querySelector('[data-original-thumbs-up-count]')?.getAttribute('data-original-thumbs-up-count');
+    const helpfulText = reviewEl.querySelector('.AJTPZc')?.innerText.trim() || '';
+    const helpfulMatch = helpfulText.match(/\d+/);
+    const thumbsUpCount = thumbsUpAttr !== null ? thumbsUpAttr : (helpfulMatch ? helpfulMatch[0] : '0');
+
+    return {
+      reviewId,
+      author,
+      rating,
+      date,
+      thumbsUpCount,
+      reviewText
+    };
+  });
+
+  if (!reviews.length) {
+    console.warn('No reviews found with selector "div.RHo1pe".');
+    return;
+  }
+
+  // Define headers
+  const headers = ['Review ID', 'Author', 'Rating', 'Date', 'Helpful Count', 'Review Text'];
+
+  // Helper to escape values for CSV
+  const escapeCsv = (val) => {
+    const stringVal = String(val ?? '');
+    return `"${stringVal.replace(/"/g, '""')}"`;
+  };
+
+  // Build CSV content
+  const csvRows = [
+    headers.map(escapeCsv).join(','),
+    ...reviews.map(r => [
+      escapeCsv(r.reviewId),
+      escapeCsv(r.author),
+      escapeCsv(r.rating),
+      escapeCsv(r.date),
+      escapeCsv(r.thumbsUpCount),
+      escapeCsv(r.reviewText)
+    ].join(','))
+  ];
+
+  const csvContent = '\uFEFF' + csvRows.join('\r\n'); // \uFEFF ensures UTF-8 compatibility in Excel
+
+  // Trigger download
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const downloadLink = document.createElement('a');
+  downloadLink.href = url;
+  downloadLink.setAttribute('download', `google_play_reviews_${Date.now()}.csv`);
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+  URL.revokeObjectURL(url);
+
+  console.log(`Successfully extracted and exported ${reviews.length} reviews.`);
+})();
