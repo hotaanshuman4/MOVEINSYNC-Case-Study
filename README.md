@@ -25,9 +25,6 @@ A review-driven case study to identify user pain points and prioritize product a
   <img src="charts/issue_frequency.png" alt="Frequency of review issue categories" width="700">
 </p>
 
-<p align="center">
-  <img src="charts/negative_by_category.png" alt="Negative reviews by issue category" width="700">
-</p>
 
 ## Recommended Priorities
 
